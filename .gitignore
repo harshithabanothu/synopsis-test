@@ -7,9 +7,10 @@
 
 # testing
 /coverage
-
+/yarn.lock
 # production
 /build
+
 
 # misc
 .DS_Store
