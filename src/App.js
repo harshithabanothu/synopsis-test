@@ -1,5 +1,5 @@
 // App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Drawer,
   List,
@@ -21,6 +21,9 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import { makeStyles } from '@mui/styles';
 
+import config from "./mock/config.json";
+import { type } from '@testing-library/user-event/dist/type';
+
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: 240,
@@ -38,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   //   zIndex: theme.zIndex.drawer + 1,
   // },
   menuButton: {
-    marginRight:'20px'
+    marginRight: '20px'
   },
   title: {
     flexGrow: 1,
@@ -55,10 +58,16 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [type, setType] = React.useState('');
+  const [items, setItems] = useState(config);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  if (items.length > 0 && !selectedItem) setSelectedItem(items[0]);
 
   const handleChange = (event) => {
-    setType(event.target.value);
+    let value = event.target.value
+    let obj = JSON.parse(JSON.stringify(selectedItem))
+    obj.type = value
+    setSelectedItem(obj);
   };
 
   const handleMouseEnter = () => {
@@ -69,40 +78,39 @@ const App = () => {
     setOpen(false);
   };
 
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+  };
+
+  if (!selectedItem) {
+    return
+  }
   return (
     <div onMouseLeave={handleMouseLeave}>
       <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar position="relative fixed" className={classes.appBar}>
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Synopsis-Test
+            {selectedItem.name}
           </Typography>
-          <Box sx={{ minWidth: 80 }}/>
+          <Box sx={{ minWidth: 30 }} />
           <Box className={classes.centerBox}>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">type</InputLabel>
-            <Select
+            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+              <InputLabel id="demo-simple-select-label">type</InputLabel>
+              <Select
                labelId="demo-simple-select-label"
                id="demo-simple-select"
-               value={type}
-               label="Type"
-               onChange={handleChange}
+                value={selectedItem.type}
+                onChange={handleChange}
+                label="type"
               >
-             <MenuItem value="Synopsis">Synopsis</MenuItem>
-             <MenuItem value="Designer">Designer</MenuItem>
-           
-          </Select>
-         </FormControl>
+                <MenuItem value="widget">Widget</MenuItem>
+                <MenuItem value="designer">Designer</MenuItem>
+
+              </Select>
+            </FormControl>
           </Box>
-         
+
         </Toolbar>
       </AppBar>
       <div className={classes.hoverArea} onMouseEnter={handleMouseEnter} />
@@ -113,17 +121,15 @@ const App = () => {
         classes={{ paper: classes.drawerPaper }}
       >
         <List>
-          <ListItem button>
-            <ListItemText primary="Home" />
+          {items.map(item => (<ListItem button key={item.id} onClick={() => handleItemClick(item)}>
+            <ListItemText primary={item.name} />
           </ListItem>
-          <ListItem button>
-            <ListItemText primary="About" />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="Contact" />
-          </ListItem>
+          ))}
         </List>
       </Drawer>
+      <div style={{ position: 'absolute' }}>
+        {selectedItem.id}
+      </div>
     </div>
   );
 };
