@@ -69,9 +69,6 @@ const App = () => {
     setOpen(false);
   };
 
- 
- 
- 
   return (
     <div onMouseLeave={handleMouseLeave}>
       <CssBaseline />
