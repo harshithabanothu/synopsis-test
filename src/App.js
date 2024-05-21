@@ -1,5 +1,4 @@
-// App.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Drawer,
   List,
@@ -9,20 +8,42 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  IconButton,
-  Menu,
-  MenuItem,
   FormControl,
   InputLabel,
   Select,
+  MenuItem,
   Box
-
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import { makeStyles } from '@mui/styles';
-
-import config from "./mock/config.json";
-import { type } from '@testing-library/user-event/dist/type';
+import { Synopsis } from 'gtms-synopsis';
+import config from './mock/config.json';
+// const data={
+//   appid: "ROOT_SYNOPSIS", // Application identifer for rendering app
+//   type: "widget", // widget or designer
+//   hierarchy: hierarchy, //hierarchy in JSON format
+//   data: data, //Flat Data in JSON format
+//   flexcelData: flexcelData, //flexcelData Flat Data in JSON format
+//   dictionaries: dictionaries, // dictionaries in JSON format
+//   units: units, // Units or Currencies we are supporting
+//   fields: fields, // Need the fields in the same sequence in which data is coming
+//   styleFormats: styleFormats, // Need the styleFormats object for styling
+//   formats: {
+//       dateFormat: "MM/DD/YYYY", //Date format key
+//       decimalNotation: "Z", // Decimal Notation key
+//       currencyFormat: "", //Currency Format Key
+//       negNumFormat: "", //Negative Number Format Key
+//   },
+//   options: {
+//       showDownloadButton: true,
+//       showUserViews: true,
+//       showFilters: true,
+//       showUserSettings: true,
+//       showFullScreenButton: true,
+//   },                              // Options for hiding the toolbar buttons
+//   themeDefaults : themeDefaults ,// Need the default theme object styles from SAP UI5
+//   onChange: onChange, // Callback function for getting the updated data
+//   onFullScreen: onFullScreen, // Callback function for toggling the fullscreen
+// };
 
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
@@ -40,9 +61,6 @@ const useStyles = makeStyles((theme) => ({
   // appBar: {
   //   zIndex: theme.zIndex.drawer + 1,
   // },
-  menuButton: {
-    marginRight: '20px'
-  },
   title: {
     flexGrow: 1,
   },
@@ -59,15 +77,14 @@ const App = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(config);
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  if (items.length > 0 && !selectedItem) setSelectedItem(items[0]);
+  const [selectedItem, setSelectedItem] = useState(items.length > 0 ? items[0] : null);
 
   const handleChange = (event) => {
-    let value = event.target.value
-    let obj = JSON.parse(JSON.stringify(selectedItem))
-    obj.type = value
-    setSelectedItem(obj);
+    const value = event.target.value;
+    setSelectedItem((prevSelectedItem) => ({
+      ...prevSelectedItem,
+      type: value,
+    }));
   };
 
   const handleMouseEnter = () => {
@@ -83,12 +100,13 @@ const App = () => {
   };
 
   if (!selectedItem) {
-    return
+    return null;
   }
+
   return (
-    <div onMouseLeave={handleMouseLeave}>
+    <div style={{ height: "100%" }} onMouseLeave={handleMouseLeave}>
       <CssBaseline />
-      <AppBar position="relative fixed" className={classes.appBar}>
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             {selectedItem.name}
@@ -96,21 +114,19 @@ const App = () => {
           <Box sx={{ minWidth: 30 }} />
           <Box className={classes.centerBox}>
             <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-              <InputLabel id="demo-simple-select-label">type</InputLabel>
+              <InputLabel id="demo-simple-select-label">Type</InputLabel>
               <Select
-               labelId="demo-simple-select-label"
-               id="demo-simple-select"
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
                 value={selectedItem.type}
                 onChange={handleChange}
-                label="type"
+                label="Type"
               >
                 <MenuItem value="widget">Widget</MenuItem>
                 <MenuItem value="designer">Designer</MenuItem>
-
               </Select>
             </FormControl>
           </Box>
-
         </Toolbar>
       </AppBar>
       <div className={classes.hoverArea} onMouseEnter={handleMouseEnter} />
@@ -121,14 +137,24 @@ const App = () => {
         classes={{ paper: classes.drawerPaper }}
       >
         <List>
-          {items.map(item => (<ListItem button key={item.id} onClick={() => handleItemClick(item)}>
-            <ListItemText primary={item.name} />
-          </ListItem>
+          {items.map((item) => (
+            <ListItem button key={item.id} onClick={() => handleItemClick(item)}>
+              <ListItemText primary={item.name} />
+            </ListItem>
           ))}
         </List>
       </Drawer>
-      <div style={{ position: 'absolute' }}>
-        {selectedItem.id}
+      <div style={{ marginTop: "100px", height: "calc(100% - 100px)" }}>
+        {/* {selectedItem.id} */}
+        {
+          items.map(item => {
+            return (
+              <div id={item.appid} className={(selectedItem.id === item.id) ? 'displayBlock' : "displayNone"} style={{ height: "100%" }}>
+                <Synopsis config={item} />
+              </div>
+            );
+          })
+        }
       </div>
     </div>
   );

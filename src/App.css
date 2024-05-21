@@ -10,3 +10,10 @@
   color: white;
 }
 
+.displayNone{
+  display: none;
+}
+.displayBlock{
+  display: block;
+}
+
