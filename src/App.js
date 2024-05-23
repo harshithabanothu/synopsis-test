@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './App.css';
 import {
   Drawer,
   List,
@@ -17,33 +18,6 @@ import {
 import { makeStyles } from '@mui/styles';
 import { Synopsis } from 'gtms-synopsis';
 import config from './mock/config.json';
-// const data={
-//   appid: "ROOT_SYNOPSIS", // Application identifer for rendering app
-//   type: "widget", // widget or designer
-//   hierarchy: hierarchy, //hierarchy in JSON format
-//   data: data, //Flat Data in JSON format
-//   flexcelData: flexcelData, //flexcelData Flat Data in JSON format
-//   dictionaries: dictionaries, // dictionaries in JSON format
-//   units: units, // Units or Currencies we are supporting
-//   fields: fields, // Need the fields in the same sequence in which data is coming
-//   styleFormats: styleFormats, // Need the styleFormats object for styling
-//   formats: {
-//       dateFormat: "MM/DD/YYYY", //Date format key
-//       decimalNotation: "Z", // Decimal Notation key
-//       currencyFormat: "", //Currency Format Key
-//       negNumFormat: "", //Negative Number Format Key
-//   },
-//   options: {
-//       showDownloadButton: true,
-//       showUserViews: true,
-//       showFilters: true,
-//       showUserSettings: true,
-//       showFullScreenButton: true,
-//   },                              // Options for hiding the toolbar buttons
-//   themeDefaults : themeDefaults ,// Need the default theme object styles from SAP UI5
-//   onChange: onChange, // Callback function for getting the updated data
-//   onFullScreen: onFullScreen, // Callback function for toggling the fullscreen
-// };
 
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
